@@ -1,14 +1,14 @@
 {
-	"name": "vite-template-solid",
-	"version": "0.0.0",
-	"description": "",
+	"name": "macro-tracker",
+	"version": "1.0.0",
+	"description": "Simple Macro Tracker",
 	"scripts": {
 		"start": "vite",
 		"dev": "vite",
 		"build": "vite build",
 		"serve": "vite preview"
 	},
-	"license": "MIT",
+	"license": "UNLICENSED",
 	"devDependencies": {
 		"autoprefixer": "^10.4.19",
 		"postcss": "^8.4.38",
@@ -21,6 +21,5 @@
 	},
 	"dependencies": {
 		"solid-js": "^1.8.11"
-	},
-	"packageManager": "pnpm@7.29.1+sha1.0bad188e84ffb283a93f29d4dee752f29c0ff845"
+	}
 }
