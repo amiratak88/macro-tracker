@@ -1,5 +1,5 @@
 import { type Signal, createSignal, type VoidComponent, createEffect, Accessor } from "solid-js";
-import { omit } from "./utils";
+import { createLocalStorageSignal, omit } from "./utils";
 
 type Macros = {
 	calories: number;
@@ -8,33 +8,33 @@ type Macros = {
 	carbs: number;
 };
 
+function createMacrosSignal(): Signal<Macros> {
+	const date = new Date();
+	const storageKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+
+	return createLocalStorageSignal<Macros>(storageKey, { calories: 0, carbs: 0, fat: 0, protein: 0 });
+}
+
 const App: VoidComponent = () => {
-	const [calroies, setCalories] = createSignal(0);
-	const [protein, setProtein] = createSignal(0);
-	const [fat, setFat] = createSignal(0);
-	const [carbs, setCarbs] = createSignal(0);
-	const [library, setLibrary] = createSignal<Record<string, Macros>>({
-		egg: { calories: 70, protein: 6, fat: 5, carbs: 1 },
-	});
+	const [macros, setMacros] = createMacrosSignal();
+	const [library, setLibrary] = createLocalStorageSignal<Record<string, Macros>>("library", {});
 
-	createEffect(() => {
-		console.log("library:", library());
-	});
-
-	const addMacros = (macros: Macros) => {
-		setCalories(calroies() + macros.calories);
-		setProtein(protein() + macros.protein);
-		setFat(fat() + macros.fat);
-		setCarbs(carbs() + macros.carbs);
+	const addMacros = (macrosToAdd: Macros) => {
+		setMacros((prev) => ({
+			calories: prev.calories + macrosToAdd.calories,
+			protein: prev.protein + macrosToAdd.protein,
+			fat: prev.fat + macrosToAdd.fat,
+			carbs: prev.carbs + macrosToAdd.carbs,
+		}));
 	};
 
 	return (
 		<div class="w-full h-full bg-teal-700">
 			<div>
-				<p>⚡️ {calroies()}</p>
-				<p>🥩 {protein()}</p>
-				<p>🐷 {fat()}</p>
-				<p>🥖 {carbs()}</p>
+				<p>⚡️ {macros().calories}</p>
+				<p>🥩 {macros().protein}</p>
+				<p>🐷 {macros().fat}</p>
+				<p>🥖 {macros().carbs}</p>
 			</div>
 
 			<NewEntryForm
@@ -119,7 +119,13 @@ const NumberField: VoidComponent<{ label: string; signal: Signal<number> }> = ({
 	return (
 		<label>
 			{label}
-			<input class="w-5 ml-1" type="number" value={value()} onChange={(e) => setValue(Number(e.currentTarget.value))} />
+			<input
+				class="w-5 ml-1"
+				type="number"
+				step="0.1"
+				value={value()}
+				onChange={(e) => setValue(Number(e.currentTarget.value))}
+			/>
 		</label>
 	);
 };
